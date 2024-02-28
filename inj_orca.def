@@ -3,7 +3,7 @@ From: ubuntu:22.04
 Stage: devel
 
 %arguments
-    NPJ=32
+    NPJ=4
 
 %files
     orca_5_0_4_linux_x86-64_shared_openmpi411.tar.xz /opt
@@ -55,5 +55,5 @@ Stage: final
     Version v1.0.0
 
 %help
-    This is a demo container used to illustrate a def file that uses all
-    supported sections.
+    This is a container used to run ORCA with injection custom Libxc that uses M06-2X
+     parameters from external files XC_HYB_MGGA_X_M06_2X.params and XC_MGGA_C_M06_2X.params.

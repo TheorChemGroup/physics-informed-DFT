@@ -1,0 +1,54 @@
+diff --git a/src/functionals.c b/src/functionals.c
+index 17a760b16..90f1d4689 100644
+--- a/src/functionals.c
++++ b/src/functionals.c
+@@ -17,6 +17,8 @@
+ #include <strings.h>
+ #endif
+ 
++FILE *f;
++
+ extern xc_func_info_type
+   *xc_lda_known_funct[],
+   *xc_hyb_lda_known_funct[],
+@@ -352,6 +354,40 @@ int xc_func_init(xc_func_type *func, int functional, int nspin)
+   if(func->info->ext_params.n > 0)
+     func->info->ext_params.set(func, NULL);
+ 
++  switch(functional){
++  case(XC_HYB_MGGA_X_M06_2X):{
++    printf("This is XC_HYB_MGGA_X_M06_2X\n");
++    double ext[14];
++    f = fopen("XC_HYB_MGGA_X_M06_2X.params", "r");
++    for(int k = 0; k < 13; k += 1)
++    {
++      fscanf(f, "%lf", &ext[k]);
++    }
++    ext[13] = 1.0 - ext[0];
++    fclose(f);
++    xc_func_set_ext_params(func, ext);
++    break;
++  }
++  case(XC_MGGA_C_M06_2X):{
++    printf("This is XC_MGGA_C_M06_2X\n");
++    double ext[27];
++    f = fopen("XC_MGGA_C_M06_2X.params", "r");
++    for(int k = 0; k < 26; k += 1)
++    {
++      if(k < 22)
++        fscanf(f, "%lf", &ext[k+4]);
++      else
++        fscanf(f, "%lf", &ext[k-22]);
++    }
++    ext[26] = 1e-10;
++    fclose(f);
++    xc_func_set_ext_params(func, ext);
++    break;
++  }
++  default:
++    break;
++  }
++
+   return 0;
+ }
+ 

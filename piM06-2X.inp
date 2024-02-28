@@ -1,0 +1,15 @@
+! def2-QZVP TightSCF
+
+%method
+  method dft
+  exchange hyb_mgga_x_m06_2x
+  correlation mgga_c_m06_2x
+end
+
+*xyz 0 1
+C         0.00000      0.00000      0.00000
+H         0.62664     -0.62664      0.62664
+H        -0.62664      0.62664      0.62664
+H        -0.62664     -0.62664     -0.62664
+H         0.62664      0.62664     -0.62664
+*

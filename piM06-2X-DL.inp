@@ -1,0 +1,19 @@
+! def2-QZVP TightSCF D3BJ
+
+%method
+  method dft
+  exchange hyb_mgga_x_m06_2x
+  correlation mgga_c_m06_2x
+  D3S6 1.0000
+  D3A1 0.4145
+  D3S8 1.2177
+  D3A2 4.8593
+end
+
+*xyz 0 1
+C         0.00000      0.00000      0.00000
+H         0.62664     -0.62664      0.62664
+H        -0.62664      0.62664      0.62664
+H        -0.62664     -0.62664     -0.62664
+H         0.62664      0.62664     -0.62664
+*

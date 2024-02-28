@@ -1,0 +1,59 @@
+Bootstrap: docker
+From: ubuntu:22.04
+Stage: devel
+
+%arguments
+    NPJ=32
+
+%files
+    orca_5_0_4_linux_x86-64_shared_openmpi411.tar.xz /opt
+    libxc.patch /opt
+    gensh_inj.py /opt
+
+%post
+    # update packages
+    cd /opt
+    apt update && apt install -y git build-essential cmake xz-utils wget python3
+
+    # download openmpi and libxc
+    wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.1.tar.gz
+    git clone https://gitlab.com/libxc/libxc.git -b 5.1.1
+
+    # install orca
+    mkdir orca && mkdir orcabin && tar xf orca_5_0_4_linux_x86-64_shared_openmpi411.tar.xz -C orcabin --strip-components 1
+    python3 gensh_inj.py
+
+    # install openmpi
+    tar xf openmpi-4.1.1.tar.gz
+    cd openmpi-4.1.1
+    ./configure --prefix /opt/openmpi && make -j {{ NPJ }} && make install
+
+    # install libxc
+    cd /opt/libxc
+    patch src/functionals.c ../libxc.patch
+    cmake -H. -Bobjdir -DBUILD_SHARED_LIBS=ON
+    cd objdir && make -j {{ NPJ }}
+    cp libxc.so.9 /opt/libxc.so
+
+
+Bootstrap: docker
+From: ubuntu:22.04
+Stage: final
+
+%files from devel
+  /opt/orca /opt
+  /opt/orcabin /opt
+  /opt/libxc.so /opt
+  /opt/openmpi /opt
+
+%environment
+    export PATH=/opt/orca:/opt/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/opt/orca:/opt/openmpi/lib:$LD_LIBRARY_PATH
+
+%labels
+    Author losev.tim.v@gmail.com
+    Version v1.0.0
+
+%help
+    This is a demo container used to illustrate a def file that uses all
+    supported sections.

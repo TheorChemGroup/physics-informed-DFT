@@ -22,6 +22,7 @@ p <- Fx_Fxc_tab %>%
          var=factor(var, levels=c("Fx","Fxc"),labels=c("F[x]","F[xc]")),
          Name=factor(Name, levels=c("PBE", "R2SCAN", "M06-2X", "piM06-2X", "piM06-2X-DL"))) %>%
   ggplot(aes(x=s, y=val, linetype=alpha, color=Name, linewidth=lw)) +
+    geom_hline(yintercept=1.804, color="blue", linewidth=0.8) +
     geom_line(alpha=1) +
     coord_cartesian(ylim=c(-0.2,3.3), xlim=c(0,5), expand=F) +
     scale_x_continuous(expression(paste("Normed gradient, ", italic(s)))) +

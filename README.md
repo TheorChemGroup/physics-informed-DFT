@@ -17,3 +17,16 @@ piM06-2X-DL
 cp piM06-2X-DL/0933013/* .
 apptainer run inj_orca.sif orca piM06-2X-DL.inp > piM06-2X-DL.out
 ```
+
+## FILE ORGANIZATION
+
+| | |
+| --- | --- |
+| Figures/ | Directory containing R plots |
+| piM06-2X-DL/ | Directory containing piM06-2X-DL parameters for ORCA |
+| piM06-2X/ | Directory containing piM06-2X parameters for ORCA |
+| README.md | The readme file providing an overview of the repository |
+| inj_orca.def | Configuration file for the Apptainer with ORCA quantum chemistry program |
+| libxc.patch | Patch file for the Libxc library |
+| piM06-2X-DL.inp | ORCA input file example for the piM06-2X-DL calculation |
+| piM06-2X.inp | ORCA input file example for the piM06-2X calculation |

@@ -8,7 +8,6 @@ Stage: devel
 %files
     orca_5_0_4_linux_x86-64_shared_openmpi411.tar.xz /opt
     libxc.patch /opt
-    gensh_inj.py /opt
 
 %post
     # update packages
@@ -20,20 +19,20 @@ Stage: devel
     git clone https://gitlab.com/libxc/libxc.git -b 5.1.1
 
     # install orca
-    mkdir orca && mkdir orcabin && tar xf orca_5_0_4_linux_x86-64_shared_openmpi411.tar.xz -C orcabin --strip-components 1
-    python3 gensh_inj.py
+    mkdir orca && mkdir orcabin && tar xf orca_5_0_4_linux_x86-64_shared_openmpi411.tar.xz -C orca --strip-components 1
 
     # install openmpi
     tar xf openmpi-4.1.1.tar.gz
     cd openmpi-4.1.1
     ./configure --prefix /opt/openmpi && make -j {{ NPJ }} && make install
+    echo "plm_rsh_agent = " >> /opt/openmpi/etc/openmpi-mca-params.conf
 
     # install libxc
     cd /opt/libxc
     patch src/functionals.c ../libxc.patch
-    cmake -H. -Bobjdir -DBUILD_SHARED_LIBS=ON
-    cd objdir && make -j {{ NPJ }}
-    cp libxc.so.9 /opt/libxc.so
+    cmake . -Bbuild -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/opt
+    cmake --build build --parallel {{ NPJ }}
+    cmake --install build
 
 
 Bootstrap: docker
@@ -43,12 +42,13 @@ Stage: final
 %files from devel
   /opt/orca /opt
   /opt/orcabin /opt
-  /opt/libxc.so /opt
+  /opt/lib /opt
   /opt/openmpi /opt
 
 %environment
     export PATH=/opt/orca:/opt/openmpi/bin:$PATH
     export LD_LIBRARY_PATH=/opt/orca:/opt/openmpi/lib:$LD_LIBRARY_PATH
+    export LD_PRELOAD=/opt/lib/libxc.so
 
 %labels
     Author losev.tim.v@gmail.com
@@ -56,4 +56,4 @@ Stage: final
 
 %help
     This is a container used to run ORCA with injection custom Libxc that uses M06-2X
-     parameters from external files XC_HYB_MGGA_X_M06_2X.params and XC_MGGA_C_M06_2X.params.
+    parameters from external files XC_HYB_MGGA_X_M06_2X.params and XC_MGGA_C_M06_2X.params.
